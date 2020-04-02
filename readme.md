@@ -1,6 +1,6 @@
-#简易计算器
+# 简易计算器
 
-##本地运行
+## 本地运行
 ```bash
 npm i -g typescript // 编译 typescript 的工具
 npm i -g ts-node// 使 node 支持 typescript
