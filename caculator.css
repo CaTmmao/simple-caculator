@@ -1,0 +1,29 @@
+.container {
+  display: inline-block;
+}
+
+.output {
+  height: 6em;
+  border: 1px #aaa solid;
+  position: relative;
+}
+
+.output span {
+  font-size: 34px;;
+  position: absolute;
+  bottom: 0.4em;
+  right: 0.4em;
+}
+
+.button {
+  height: 6em;
+  width: 6em;
+}
+
+.button.text-clear {
+  width: 18em;
+}
+
+.button.text-0 {
+  width: 12em;
+}
