@@ -8,6 +8,7 @@ class Caculator {
   public container: HTMLDivElement;
   public span: HTMLSpanElement;
   public output: HTMLDivElement;
+  public result: string;
   public keys: Array<Array<string>> = [
     ["clear", "÷"],
     ["7", "8", "9", "×"],
@@ -19,7 +20,7 @@ class Caculator {
     this.createContainer();
     this.createOutput();
     this.createButtons();
-    this.bindEvent()
+    this.bindEvent();
   }
   // 创建计算器 container
   createContainer() {
@@ -34,7 +35,7 @@ class Caculator {
     output.className = "output";
     let span: HTMLSpanElement = document.createElement("span");
     span.textContent = "0";
-    this.span = span
+    this.span = span;
     output.appendChild(this.span);
     this.output = output;
     this.container.appendChild(output);
@@ -61,6 +62,53 @@ class Caculator {
       this.container.appendChild(div);
     });
   }
+  // 更新左 / 右操作数
+  numberOperate(key, text) {
+    if (this[key]) {
+      this[key] += text
+    } else {
+      this[key] = text
+    }
+
+    this.span.textContent = this[key];
+  }
+  // 更新操作数
+  updateNum(text: string) {
+    // 没有点击操作
+    if (!this.operate) {
+      this.numberOperate("n1", text);
+    } else {
+      this.numberOperate("n2", text);
+    }
+  }
+  // 更新结果
+  updateResult(text: string) {
+    // 操作符
+    let { operate, n1, n2 } = this;
+    // 结果
+    let result;
+
+    if (!operate || !n1 || !n2) return
+
+    n1 = parseFloat(n1)
+    n2 = parseFloat(n2)
+
+    if (operate === "+") {
+      result = n1 + n2;
+    } else if (operate === "-") {
+      result = n1 - n2;
+    } else if (operate === "×") {
+      result = n1 * n2;
+    } else if (operate === "÷") {
+      result = n1 / n2;
+    }
+
+    this.span.textContent = result;
+    this.result = result;
+    this.n1 = ''
+    this.n2 = ''
+    this.operate = ''
+  }
   // 监听点击事件
   bindEvent() {
     this.container.addEventListener("click", event => {
@@ -69,53 +117,21 @@ class Caculator {
         let text = event.target.textContent;
 
         // 数字
-        if ("0123456789".indexOf(text) >= 0) {
-          let { operate, n1, n2 } = this;
-          // 没有点击操作
-          if (!operate) {
-            if (n1) {
-              this.n1 = parseInt(`${n1}text`);
-            } else {
-              this.n1 = parseInt(text);
-            }
-            
-            this.span.textContent = this.n1
-          } else {
-            if (n2) {
-              this.n2 = parseInt(`${n2}text`);
-            } else {
-              this.n2 = parseInt(text);
-            }
-            this.span.textContent = this.n2
-          }
+        if ("0123456789.".indexOf(text) >= 0) {
+          this.updateNum(text);
         } else if ("+-×÷".indexOf(text) >= 0) {
-          // 操作
           this.operate = text;
-        } else if (text === "=") {
-          // 计算结果
-          
-          // 操作符
-          let { operate, n1, n2 } = this;
-          // 结果
-          let result
-
-          if (operate === "+") {
-            result = n1 + n2 
-          } else if (operate === "-") {
-            result = n1 - n2 
-          } else if (operate === "×") {
-            result = n1 * n2 
-          } else if (operate === "÷") {
-            result = n1 / n2 
+          if (!this.n1) {
+            this.n1 = this.result
           }
-
-          this.span.textContent = result
+        } else if (text === "=") {
+          this.updateResult(text);
         } else if (text === "clear") {
-          // 清空
           this.operate = "";
           this.n1 = "";
           this.n2 = "";
-          this.span.textContent = '0'
+          this.span.textContent = "0";
+          this.result = '0'
         }
       }
     });
